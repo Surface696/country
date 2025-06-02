@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>COUNTRY & 696</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  color: #cccccc;
+  font-family: 'Anonymous Pro', monospace;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+* {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+*:focus,
+*:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+  max-width: 100vw;
+}
+#crt-screen {
+  display: none;
+}
+.terminal-effect {
+  font-family: 'Anonymous Pro', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: transparent;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.terminal-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 1;
+}
+.loading-screen {
+  text-align: center;
+  z-index: 3;
+  padding: 20px;
+  border: 1px solid #333333;
+  background-color: #111111;
+  max-width: 600px;
+  width: 90%;
+  border-radius: 12px;
+}
+.system-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+  transition: opacity 1s ease-in-out;
+  font-family: 'Anonymous Pro', monospace;
+  background: linear-gradient(90deg, #cccccc, #999999);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 5px rgba(204, 204, 204, 0.3);
+}
+.system-subtitle {
+  font-size: 14px;
+  margin-bottom: 25px;
+  transition: opacity 1s ease-in-out;
+  color: #999999;
+}
+.loading-text {
+  font-size: 14px;
+  white-space: pre-wrap;
+  text-align: left;
+  max-width: 600px;
+  margin: 10px auto 0;
+  display: none;
+  font-family: 'Anonymous Pro', monospace;
+  opacity: 0;
+  transition: opacity 1s ease;
+  color: #cccccc;
+  line-height: 1.6;
+}
+
+#intro-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(ellipse at center, #111111 0%, #000000 100%);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+#dialogue-text {
+  color: #cccccc;
+  font-size: 18px;
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 80%;
+  line-height: 1.6;
+}
+#enter-button {
+  font-family: 'Anonymous Pro', monospace;
+  padding: 12px 24px;
+  font-size: 18px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+  color: #cccccc;
+  border: 1px solid #333333;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s ease;
+  opacity: 0;
+  letter-spacing: 1px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+#enter-button:hover {
+  background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(204, 204, 204, 0.3);
+}
+#enter-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
+}
+#enter-button:hover::after {
+  left: 100%;
+}
+
+#main-content, #admins-content {
+padding: 60px 10px 80px 10px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.5s ease, transform 1.5s ease;
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+#admins-content {
+  max-width: 800px;
+}
+
+.top-bar {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 900px;
+  height: 60px;
+  background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+  border: 1px solid #333333;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1001;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.menu-toggle {
+  cursor: pointer;
+  width: 40px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: opacity 0.3s ease;
+}
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #cccccc, #999999);
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(13px) rotate(45deg);
+}
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-13px) rotate(-45deg);
+}
+
+.telegram-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(180, 180, 180, 0.4);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: white;
+  text-decoration: none;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.telegram-button i {
+  font-size: 20px;
+  margin-right: 8px;
+  color: white;
+}
+.telegram-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
+}
+.nav-sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+  border-right: 1px solid #333333;
+  z-index: 1000;
+  padding: 100px 20px 20px;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(5px);
+}
+.nav-sidebar.active {
+  left: 0;
+}
+.nav-button {
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  border: 1px solid #333333;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 12px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+.nav-button i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+.nav-button:hover,
+.nav-button.active {
+  background: linear-gradient(135deg, #222222 0%, #2a2a2a 100%);
+  transform: translateX(5px);
+}
+.nav-button.active {
+  border-left: 3px solid #cccccc;
+}
+.nav-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: 0.5s;
+}
+.nav-button:hover::after {
+  left: 100%;
+}
+
+#visit-button {
+  animation: bloodPulse 1.6s infinite;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #4d0000 100%);
+  border: 1px solid #333333;
+}
+#visit-count-number {
+  margin-left: 8px;
+  font-weight: bold;
+}
+@keyframes bloodPulse {
+  0% {
+    transform: scale(1);
+    background: linear-gradient(135deg, #1a1a1a 0%, #4d0000 100%);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #4d0000 0%, #1a1a1a 100%);
+    box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    background: linear-gradient(135deg, #1a1a1a 0%, #4d0000 100%);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+  }
+}
+
+.quote-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+  border: 1px solid #333333;
+  padding: 14px 20px;
+  margin: 70px auto;
+  gap: 10px;
+  width: 90vw;
+  max-width: 800px;
+  border-radius: 14px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+.quote-text {
+  display: flex;
+  flex-direction: column;
+  color: #aaaaaa;
+  font-size: 16px;
+  line-height: 1.8;
+  flex: 1;
+}
+
+.foto-rotativa {
+  margin-left: -50px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: rotateImage 12s linear infinite;
+  border: 1px solid #333333;
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
+}
+.foto-rotativa:hover {
+  filter: grayscale(0%);
+  box-shadow: 0 0 15px rgba(204, 204, 204, 0.3);
+}
+@keyframes rotateImage {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.main-title {
+  font-family: 'Metal Mania', cursive;
+  font-size: 32px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-top: -50px !important;
+  margin-bottom: 10px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+@keyframes shine {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+
+.container {
+  position: relative;
+  width: 90vw;
+  max-width: 800px;
+  height: 50vh;
+  min-height: 250px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #333333;
+  margin: 0px auto 10px auto;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+#carrossel {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.img {
+  min-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: pointer;
+  flex-shrink: 0;
+  filter: grayscale(30%);
+  transition: filter 0.3s ease;
+}
+.img:hover {
+  filter: grayscale(0%);
+}
+.btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: #cccccc;
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  border: 1px solid #333333;
+  cursor: pointer;
+  padding: 10px 15px;
+  z-index: 2;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+.btn:hover {
+  opacity: 1;
+  background: linear-gradient(135deg, #222222 0%, #2a2a2a 100%);
+}
+.btn.left { left: 15px; }
+.btn.right { right: 15px; }
+
+.tooltip {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #cccccc;
+  font-size: 12px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  padding: 8px 15px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 2;
+  border: 1px solid #333333;
+  pointer-events: none;
+  font-family: 'Anonymous Pro', monospace;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+.tooltip.show { opacity: 1; }
+
+.counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #999999;
+  font-size: 12px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  padding: 5px 15px;
+  z-index: 2;
+  font-family: 'Anonymous Pro', monospace;
+  border: 1px solid #333333;
+  border-radius: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.admin-title {
+  text-align: center;
+  font-size: 28px;
+  font-family: 'Metal Mania', cursive;
+  margin: 40px 0 30px;
+  color: #cccccc;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+}
+.admin-title::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #cccccc, transparent);
+  margin: 10px auto;
+}
+.admin-section {
+  margin-bottom: 40px;
+  padding: 20px;
+  border: 1px solid #333333;
+  background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.section-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #cccccc;
+  font-family: 'Anonymous Pro', monospace;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 10px;
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, #cccccc, transparent);
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+}
+.admin-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.admin-list li {
+  padding: 10px 0;
+  border-bottom: 1px dashed #333333;
+  color: #aaaaaa;
+  font-family: 'Anonymous Pro', monospace;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+.admin-list li::before {
+  content: '>';
+  margin-right: 10px;
+  color: #999999;
+}
+.admin-list li:hover {
+  color: #cccccc;
+  transform: translateX(5px);
+}
+.admin-list li:last-child {
+  border-bottom: none;
+}
+.admin-warning {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #333333;
+  background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+  color: #aaaaaa;
+  font-family: 'Anonymous Pro', monospace;
+  line-height: 1.6;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+.admin-warning::before {
+  content: '!';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  width: 20px;
+  height: 20px;
+  background: #4d0000;
+  color: #cccccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+#musicInterface {
+  display: none;
+  opacity: 0;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+#music-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  filter: brightness(0.5);
+}
+.music-panel {
+  position: relative;
+  z-index: 1;
+  color: white;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 800px;
+  margin: 4rem auto;
+  border: 1px solid #333333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.music-panel h2 {
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 2px;
+  color: #cccccc;
+  text-transform: uppercase;
+}
+#musicVideo {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #333333;
+}
+.track-info {
+  margin-top: 1rem;
+  padding: 15px;
+  background: rgba(26, 26, 26, 0.5);
+  border-radius: 8px;
+  border: 1px solid #333333;
+}
+.track-info p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+.track-info strong {
+  color: #cccccc;
+}
+#backToMain {
+  margin-top: 1.5rem;
+  padding: 10px 20px;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-family: 'Anonymous Pro', monospace;
+}
+#backToMain:hover {
+  background: linear-gradient(135deg, #222222 0%, #2a2a2a 100%);
+  transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .quote-block {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+.foto-rotativa {
+  margin-left: 20px;
+  margin-top: 0;
+  align-self: center;
+}
+  .main-title {
+    font-size: 24px;
+  }
+  .admin-title {
+    font-size: 24px;
+  }
+  .container {
+    height: 40vh;
+  }
+  .btn {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+}
+
+#intro-vignette {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, rgba(150, 150, 150, 0.2) 0%, rgba(0, 0, 0, 0.7) 100%);
+  opacity: 0;
+  transition: opacity 1s ease-out;
+  z-index: 998;
+  pointer-events: none;
+}
+
+</style>
+</head>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const titleElement = document.getElementById("animated-title");
+
+    const writeText = (text, speed = 100) => {
+      return new Promise((resolve) => {
+        let i = 0;
+        const interval = setInterval(() => {
+          titleElement.textContent = text.slice(0, i + 1);
+          i++;
+          if (i === text.length) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, speed);
+      });
+    };
+
+    const deleteText = (speed = 50) => {
+      return new Promise((resolve) => {
+        let text = titleElement.textContent;
+        let i = text.length;
+        const interval = setInterval(() => {
+          titleElement.textContent = text.slice(0, --i);
+          if (i <= 0) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, speed);
+      });
+    };
+
+    async function animateTitleSequence() {
+      titleElement.classList.add('typing-cursor');
+      await writeText("Spill blood in his name.");
+      await new Promise(r => setTimeout(r, 2000));
+      await deleteText();
+      await new Promise(r => setTimeout(r, 300));
+      await writeText("COUNTRY x 696");
+      titleElement.classList.remove('typing-cursor');
+    }
+
+    animateTitleSequence();
+  });
+</script>
+
+<style>
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+<body>
+<div class="terminal-effect" id="crt-screen">
+  <div class="terminal-overlay"></div>
+  <div id="systemTitle" class="system-title">country 696</div>
+  <div id="systemSubtitle" class="system-subtitle">system initializing...</div>
+  <div id="loadingText" class="loading-text"></div>
+</div>
+
+<div id="intro-vignette"></div>
+<div id="intro-overlay">
+  <p id="dialogue-text"></p>
+  <button id="enter-button">START</button>
+</div>
+
+<div class="top-bar">
+  <div class="menu-toggle" id="menuToggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <a href="https://t.me/countryarquivos" target="_blank" class="telegram-button">
+    <i class="fab fa-telegram-plane"></i> Telegram
+  </a>
+</div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<div class="nav-sidebar" id="nav-sidebar">
+  <button class="nav-button active" id="nav-gallery" title="Gallery">
+    <i class="fas fa-images"></i> Gallery
+  </button>
+  <button class="nav-button" id="nav-admins" title="Administrators">
+    <i class="fas fa-users-cog"></i> Admins
+  </button>
+</div>
+
+<div id="main-content">
+  <audio id="background-music" loop hidden>
+    <source src="musica/musica.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <div id="musicInterface">
+    <video id="music-bg-video" autoplay loop muted playsinline>
+      <source src="videos/music-background.mp4" type="video/mp4" />
+      Your browser does not support video.
+    </video>
+    <div class="music-panel">
+      <h2>Now Playing</h2>
+      <video controls width="100%" id="musicVideo">
+        <source src="media/music-video.mp4" type="video/mp4" />
+        Your browser does not support video.
+      </video>
+      <div class="track-info">
+        <p><strong>Artist:</strong> Country Boy</p>
+        <p><strong>Track:</strong> Minha Canção</p>
+      </div>
+      <button id="backToMain">
+        Back to Main
+      </button>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <div class="quote-text">
+      <p>You will find healing in your soul through the purification of pain. By facing suffering, you will discover that true strength comes from that which destroys.</p>
+    </div>
+    <img src="icon/fotos696.jpg" onerror="this.src='https://placehold.co/130x130/111111/cccccc?text=696'" alt="Rotating Icon" class="foto-rotativa" />
+  </div>
+
+<h1 class="main-title" id="animated-title"></h1>
+
+  <div class="container">
+    <button class="btn left" onclick="mover(-1)">&#60;</button>
+    <div id="carrossel"></div>
+    <button class="btn right" onclick="mover(1)">></button>
+    <div class="tooltip" id="tooltip">Click and hold to download</div>
+    <div class="counter" id="imageCounter">0 of 0</div>
+  </div>
+  <div style="height: 50px;"></div>
+</div>
+
+<div id="admins-content">
+  <h1 class="admin-title">COUNTRY ADMINISTRATION</h1>
+  
+  <div class="admin-section">
+    <h2 class="section-title">FOUNDERS</h2>
+    <ul class="admin-list">
+      <li>Nemesis</li>
+      <li>inat1ve</li>
+    </ul>
+  </div>
+  
+  <div class="admin-section">
+    <h2 class="section-title">LEADERS</h2>
+    <ul class="admin-list">
+      <li>Vodka</li>
+      <li>Gabriel</li>
+      <li>Sagaz</li>
+      <li>Zenpod</li>
+      <li>Miguel</li>
+      <li>H1mmler</li>
+      <li>K1ll</li>
+      <li>Pitter</li>
+      <li>Andrey</li>
+      <li>Souza</li>
+      <li>Salvação</li>
+      <li>Carter</li>
+      <li>Saquiel</li>
+    </ul>
+  </div>
+  
+  <div class="admin-warning">
+    <p>This list was created to identify those who actually have rights over Country. Anyone who claims to be a member of Country's management, but is not on this list, is nothing more than a larp.</p>
+  </div>
+</div>
+
+
+<script>
+  const carrossel = document.getElementById("carrossel");
+  const tooltip = document.getElementById("tooltip");
+  const imageCounterElement = document.getElementById("imageCounter");
+  const dialogueText = document.getElementById("dialogue-text");
+  const enterButton = document.getElementById("enter-button");
+  const vignette = document.getElementById("intro-vignette");
+  const crtScreen = document.getElementById("crt-screen");
+  const systemTitle = document.getElementById("systemTitle");
+  const systemSubtitle = document.getElementById("systemSubtitle");
+  const loadingTextElement = document.getElementById("loadingText");
+  const introOverlay = document.getElementById("intro-overlay");
+  const mainContent = document.getElementById("main-content");
+  const adminsContent = document.getElementById("admins-content");
+  const backgroundMusic = document.getElementById("background-music");
+  const navSidebar = document.getElementById("nav-sidebar");
+  const navGallery = document.getElementById("nav-gallery");
+  const navAdmins = document.getElementById("nav-admins");
+  const visitButton = document.getElementById("visit-button");
+  const visitCountNumber = document.getElementById("visit-count-number");
+  const menuToggle = document.getElementById("menuToggle");
+  const musicInterface = document.getElementById("musicInterface");
+  const backToMain = document.getElementById("backToMain");
+  const topBar = document.querySelector('.top-bar');
+
+  const typingAudio = new Audio("audio/typing.mp3");
+  typingAudio.volume = 1.0;
+  typingAudio.playbackRate = 1.5;
+
+  let imagens = [];
+  let currentIndex = 0;
+  const TOTAL_IMAGES = 29;
+
+  function carregarImagens() {
+    imagens = [];
+    for (let i = 1; i <= TOTAL_IMAGES; i++) {
+      imagens.push(`fotos/fotos${i}.png`);
+    }
+    atualizarCarrossel();
+    atualizarImageCounter();
+    if (imagens.length > 0) mostrarTooltip();
+  }
+
+  function atualizarCarrossel() {
+    carrossel.innerHTML = '';
+    imagens.forEach((src, index) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.classList.add("img");
+      img.onerror = function () {
+        this.src = `https://placehold.co/800x500/111111/cccccc?text=Image+${index + 1}`;
+      };
+      img.addEventListener('mousedown', function (e) {
+        if (e.button === 0) {
+          const timer = setTimeout(() => downloadImage(src, `image_${index + 1}.png`), 1000);
+          const cancel = () => clearTimeout(timer);
+          document.addEventListener('mouseup', cancel, { once: true });
+        }
+      });
+      carrossel.appendChild(img);
+    });
+    currentIndex = 0;
+    carrossel.scrollTo({ left: 0 });
+    atualizarImageCounter();
+  }
+
+  function downloadImage(url, filename) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function atualizarImageCounter() {
+    imageCounterElement.textContent = imagens.length > 0 ? `${currentIndex + 1} of ${imagens.length}` : "0 of 0";
+  }
+
+  function mostrarTooltip() {
+    tooltip.classList.add("show");
+    setTimeout(() => tooltip.classList.remove("show"), 2500);
+  }
+
+  function mover(d) {
+    if (imagens.length === 0) return;
+    currentIndex = (currentIndex + d + imagens.length) % imagens.length;
+    carrossel.scrollTo({
+      left: currentIndex * carrossel.offsetWidth,
+      behavior: 'smooth'
+    });
+    atualizarImageCounter();
+    mostrarTooltip();
+  }
+
+  window.addEventListener('resize', () => {
+    if (imagens.length > 0) {
+      carrossel.scrollTo({ left: currentIndex * carrossel.offsetWidth });
+    }
+  });
+
+  const loadingMessages = [
+    "[0.01s] initializing system...",
+    "[0.02s] connecting as 'country_boy'...",
+    "[0.05s] starting authentication...",
+    "[0.45s] enabling IP spoof...",
+    "[0.75s] finalizing initialization...",
+    "[0.90s] System online. welcome!"
+  ];
+  let msgIndex = 0;
+
+  function showLoadingMessages() {
+    vignette.style.opacity = '1';
+    vignette.style.display = 'block';
+    crtScreen.style.display = 'flex';
+    crtScreen.style.opacity = '1';
+    systemTitle.style.display = 'block';
+    systemSubtitle.style.display = 'block';
+    systemTitle.style.opacity = '1';
+    systemSubtitle.style.opacity = '1';
+
+    setTimeout(() => {
+      systemTitle.style.opacity = '0';
+      systemSubtitle.style.opacity = '0';
+      setTimeout(() => {
+        systemTitle.style.display = 'none';
+        systemSubtitle.style.display = 'none';
+        loadingTextElement.style.display = 'block';
+        void loadingTextElement.offsetWidth;
+        loadingTextElement.style.opacity = '1';
+        progressMessages();
+      }, 1000);
+    }, 1000);
+  }
+
+  function progressMessages() {
+    if (msgIndex < loadingMessages.length) {
+      setTimeout(() => {
+        loadingTextElement.textContent = loadingMessages.slice(0, msgIndex + 1).join("\n");
+        msgIndex++;
+        progressMessages();
+      }, 300);
+    } else {
+      setTimeout(() => {
+        crtScreen.style.opacity = '0';
+        vignette.style.opacity = '0';
+        setTimeout(() => {
+          crtScreen.style.display = 'none';
+          vignette.style.display = 'none';
+          mainContent.style.display = 'block';
+          void mainContent.offsetWidth;
+          mainContent.style.opacity = '1';
+          mainContent.style.transform = 'translateY(0)';
+          topBar.style.opacity = '1';
+          topBar.style.pointerEvents = 'auto';
+          menuToggle.style.opacity = '1';
+          if (backgroundMusic.paused) {
+            backgroundMusic.play().catch(e => console.warn("Autoplay bloqueado", e));
+          }
+          atualizarBotaoVisitas();
+          animateTitleSequence();
+        }, 1000);
+      }, 1000);
+    }
+  }
+
+  enterButton.addEventListener("click", function () {
+    enterButton.style.transition = 'opacity 0.6s ease';
+    dialogueText.style.transition = 'opacity 0.6s ease';
+    enterButton.style.opacity = '0';
+    dialogueText.style.opacity = '0';
+    introOverlay.style.opacity = '0';
+    vignette.style.opacity = '0';
+
+    typingAudio.currentTime = 0;
+    typingAudio.play().catch(() => {});
+
+    setTimeout(() => {
+      introOverlay.style.display = 'none';
+      showLoadingMessages();
+    }, 1000);
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    carregarImagens();
+    introOverlay.style.display = 'flex';
+    vignette.style.display = 'block';
+    void introOverlay.offsetWidth;
+    introOverlay.style.opacity = '1';
+    vignette.style.opacity = '1';
+    dialogueText.textContent = "Are you ready?";
+    dialogueText.style.display = 'block';
+    enterButton.style.display = "inline-block";
+    void dialogueText.offsetWidth;
+    void enterButton.offsetWidth;
+    dialogueText.style.opacity = '1';
+    enterButton.style.opacity = "1";
+    navGallery.addEventListener('click', showGallery);
+    navAdmins.addEventListener('click', showAdmins);
+    atualizarBotaoVisitasFake();
+
+    typingAudio.load();
+    typingAudio.play().then(() => typingAudio.pause()).catch(() => {});
+  });
+
+  function atualizarBotaoVisitas() {
+    fetch("/api/visitas")
+      .then(res => res.json())
+      .then(data => visitCountNumber.textContent = data.visitas)
+      .catch(() => {
+        visitCountNumber.textContent = "error";
+        atualizarBotaoVisitasFake();
+      });
+  }
+
+  function atualizarBotaoVisitasFake() {
+    const numeros = ["696", "969", "999", "666", "996"];
+    let i = 0;
+    const interval = setInterval(() => {
+      visitCountNumber.textContent = numeros[i % numeros.length];
+      i++;
+      if (i > numeros.length * 5 && visitCountNumber.textContent !== "error") {
+        clearInterval(interval);
+      }
+    }, 300);
+  }
+
+  function showAdmins() {
+    mainContent.style.display = 'none';
+    adminsContent.style.display = 'block';
+    void adminsContent.offsetWidth;
+    adminsContent.style.opacity = '1';
+    adminsContent.style.transform = 'translateY(0)';
+    navGallery.classList.remove('active');
+    navAdmins.classList.add('active');
+    menuToggle.classList.remove('active');
+    navSidebar.classList.remove('active');
+  }
+
+  function showGallery() {
+    adminsContent.style.opacity = '0';
+    adminsContent.style.transform = 'translateY(30px)';
+    setTimeout(() => {
+      adminsContent.style.display = 'none';
+      mainContent.style.display = 'block';
+      void mainContent.offsetWidth;
+      mainContent.style.opacity = '1';
+      mainContent.style.transform = 'translateY(0)';
+    }, 300);
+    navAdmins.classList.remove('active');
+    navGallery.classList.add('active');
+    menuToggle.classList.remove('active');
+    navSidebar.classList.remove('active');
+  }
+
+  backToMain.addEventListener('click', function () {
+    musicInterface.style.opacity = '0';
+    setTimeout(() => {
+      musicInterface.style.display = 'none';
+      mainContent.style.display = 'block';
+      void mainContent.offsetWidth;
+      mainContent.style.opacity = '1';
+    }, 500);
+  });
+
+  menuToggle.addEventListener('click', function () {
+    this.classList.toggle('active');
+    navSidebar.classList.toggle('active');
+  });
+
+  document.addEventListener('click', function (event) {
+    if (
+      !navSidebar.contains(event.target) &&
+      !menuToggle.contains(event.target) &&
+      navSidebar.classList.contains('active')
+    ) {
+      navSidebar.classList.remove('active');
+      menuToggle.classList.remove('active');
+    }
+  });
+</script>
+<script>
+  let animationStarted = false;
+
+  const titleElement = document.getElementById("animated-title");
+
+  const typingAudio = new Audio("audio/typing.mp3");
+  typingAudio.volume = 1.0;
+  typingAudio.playbackRate = 1.5;
+
+  const playTypingSound = () => {
+    typingAudio.pause(); 
+    typingAudio.currentTime = 0;
+    typingAudio.play().catch(() => {});
+  };
+
+  const writeText = (text, speed = 50) => {
+    return new Promise((resolve) => {
+      let i = 0;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, i + 1);
+        playTypingSound();
+        i++;
+        if (i === text.length) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  const deleteText = (speed = 200) => {
+    return new Promise((resolve) => {
+      let text = titleElement.textContent;
+      let i = text.length;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, --i);
+        if (i <= 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  async function animateTitleSequence() {
+    if (animationStarted) return;
+    animationStarted = true;
+
+    titleElement.classList.add('typing-cursor');
+    await writeText("Spill blood in his name.");
+    await new Promise(r => setTimeout(r, 1500));
+    await deleteText();
+    await new Promise(r => setTimeout(r, 300));
+    await writeText("COUNTRY x 696");
+    titleElement.classList.remove('typing-cursor');
+  }
+</script>
+
+<style>
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+
+<script>
+  let animationStarted = false;
+
+  const titleElement = document.getElementById("animated-title");
+  const typingSound = new Audio("audio/typing.mp3");
+
+  const writeText = (text, speed = 100) => {
+    return new Promise((resolve) => {
+      let i = 0;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, i + 1);
+        if (!typingSound.paused) {
+          typingSound.pause();
+        }
+        typingSound.currentTime = 0;
+        typingSound.play().catch(() => {});
+        i++;
+        if (i === text.length) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  const deleteText = (speed = 50) => {
+    return new Promise((resolve) => {
+      let text = titleElement.textContent;
+      let i = text.length;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, --i);
+        if (!typingSound.paused) {
+          typingSound.pause();
+        }
+        typingSound.currentTime = 0;
+        typingSound.play().catch(() => {});
+        if (i <= 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  async function animateTitleSequence() {
+    if (animationStarted) return;
+    animationStarted = true;
+
+    titleElement.classList.add('typing-cursor');
+    await writeText("Spill blood in his name.");
+    await new Promise(r => setTimeout(r, 2000));
+    await deleteText();
+    await new Promise(r => setTimeout(r, 300));
+    await writeText("COUNTRY x 696");
+    titleElement.classList.remove('typing-cursor');
+  }
+</script>
+<style>
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+</body>
+</html>
