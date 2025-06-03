@@ -1083,7 +1083,14 @@ padding: 60px 10px 80px 10px;
   });
 
   document.addEventListener("DOMContentLoaded", () => {
-    carregarImagens();
+  // detectar WebView
+  const isWebView = /Telegram|Instagram|FBAN|FBAV|Line/.test(navigator.userAgent);
+
+  if (isWebView) {
+    // Desativa animações automáticas em WebView
+    console.warn("WebView detectado: bloqueando autoplay");
+  } else {
+    // Comportamento normal
     introOverlay.style.display = 'flex';
     vignette.style.display = 'block';
     void introOverlay.offsetWidth;
@@ -1096,13 +1103,16 @@ padding: 60px 10px 80px 10px;
     void enterButton.offsetWidth;
     dialogueText.style.opacity = '1';
     enterButton.style.opacity = "1";
-    navGallery.addEventListener('click', showGallery);
-    navAdmins.addEventListener('click', showAdmins);
-    atualizarBotaoVisitasFake();
+  }
 
-    typingAudio.load();
-    typingAudio.play().then(() => typingAudio.pause()).catch(() => {});
-  });
+  carregarImagens();
+  navGallery.addEventListener('click', showGallery);
+  navAdmins.addEventListener('click', showAdmins);
+  atualizarBotaoVisitasFake();
+
+  typingAudio.load();
+  typingAudio.play().then(() => typingAudio.pause()).catch(() => {});
+});
 
   function atualizarBotaoVisitas() {
     fetch("/api/visitas")
