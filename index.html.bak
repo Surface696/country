@@ -1097,7 +1097,7 @@ padding: 60px 10px 80px 10px;
   // detectar WebView
   const isWebView = /Telegram|Instagram|FBAN|FBAV|Line/.test(navigator.userAgent);
 
-  iintroOverlay.style.display = 'flex';
+introOverlay.style.display = 'flex';
 vignette.style.display = 'block';
 void introOverlay.offsetWidth;
 void vignette.offsetWidth;
@@ -1110,7 +1110,6 @@ void dialogueText.offsetWidth;
 void enterButton.offsetWidth;
 dialogueText.style.opacity = '1';
 enterButton.style.opacity = "1";
-
   carregarImagens();
   navGallery.addEventListener('click', showGallery);
   navAdmins.addEventListener('click', showAdmins);

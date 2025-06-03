@@ -1196,61 +1196,56 @@ enterButton.style.opacity = "1";
   });
 </script>
 <script>
-  let animationStarted = false;
+const titleElement = document.getElementById("animated-title");
+const typingSound = new Audio("audio/typing.mp3");
+typingSound.volume = 1.0;
+typingSound.playbackRate = 1.5;
 
-  const titleElement = document.getElementById("animated-title");
+const playTypingSound = () => {
+  typingSound.pause();
+  typingSound.currentTime = 0;
+  typingSound.play().catch(() => {});
+};
 
-  const typingAudio = new Audio("audio/typing.mp3");
-  typingAudio.volume = 1.0;
-  typingAudio.playbackRate = 1.5;
+const writeText = (text, speed = 100) => {
+  return new Promise((resolve) => {
+    let i = 0;
+    const interval = setInterval(() => {
+      titleElement.textContent = text.slice(0, i + 1);
+      playTypingSound();
+      i++;
+      if (i === text.length) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, speed);
+  });
+};
 
-  const playTypingSound = () => {
-    typingAudio.pause(); 
-    typingAudio.currentTime = 0;
-    typingAudio.play().catch(() => {});
-  };
+const deleteText = (speed = 50) => {
+  return new Promise((resolve) => {
+    let text = titleElement.textContent;
+    let i = text.length;
+    const interval = setInterval(() => {
+      titleElement.textContent = text.slice(0, --i);
+      playTypingSound();
+      if (i <= 0) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, speed);
+  });
+};
 
-  const writeText = (text, speed = 50) => {
-    return new Promise((resolve) => {
-      let i = 0;
-      const interval = setInterval(() => {
-        titleElement.textContent = text.slice(0, i + 1);
-        playTypingSound();
-        i++;
-        if (i === text.length) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, speed);
-    });
-  };
-
-  const deleteText = (speed = 200) => {
-    return new Promise((resolve) => {
-      let text = titleElement.textContent;
-      let i = text.length;
-      const interval = setInterval(() => {
-        titleElement.textContent = text.slice(0, --i);
-        if (i <= 0) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, speed);
-    });
-  };
-
-  async function animateTitleSequence() {
-    if (animationStarted) return;
-    animationStarted = true;
-
-    titleElement.classList.add('typing-cursor');
-    await writeText("Spill blood in his name.");
-    await new Promise(r => setTimeout(r, 1500));
-    await deleteText();
-    await new Promise(r => setTimeout(r, 300));
-    await writeText("COUNTRY x 696");
-    titleElement.classList.remove('typing-cursor');
-  }
+async function animateTitleSequence() {
+  titleElement.classList.add('typing-cursor');
+  await writeText("Spill blood in his name.");
+  await new Promise(r => setTimeout(r, 2000));
+  await deleteText();
+  await new Promise(r => setTimeout(r, 300));
+  await writeText("COUNTRY x 696");
+  titleElement.classList.remove('typing-cursor');
+}
 </script>
 
 <style>
