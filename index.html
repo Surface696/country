@@ -726,99 +726,49 @@ padding: 60px 10px 80px 10px;
 </style>
 </head>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const enterButton = document.getElementById("enter-button");
-  const loadingScreen = document.getElementById("loading-screen");
-  const crtScreen = document.getElementById("crt-screen");
-  const vignette = document.getElementById("vignette");
-  const mainContent = document.getElementById("main-content");
-  const topBar = document.getElementById("top-bar");
-  const menuToggle = document.getElementById("menu-toggle");
-  const loadingTextElement = document.getElementById("loading-text");
-  const backgroundMusic = document.getElementById("background-music");
+  window.addEventListener("DOMContentLoaded", () => {
+    const titleElement = document.getElementById("animated-title");
 
-  const loadingMessages = [
-    "[ Inicializando sistema . . . ]",
-    "[ Carregando interface gráfica . . . ]",
-    "[ Sincronizando dados . . . ]",
-    "[ Preparando ambiente . . . ]",
-    "[ Tudo pronto. Bem-vindo! ]"
-  ];
-
-  let msgIndex = 0;
-
-  function showLoadingMessages() {
-    loadingScreen.style.display = 'none';
-    crtScreen.style.display = 'block';
-    vignette.style.display = 'block';
-    crtScreen.style.opacity = '1';
-    vignette.style.opacity = '1';
-    loadingTextElement.textContent = '';
-    msgIndex = 0;
-    progressMessages();
-  }
-
-  function progressMessages() {
-    if (msgIndex < loadingMessages.length) {
-      setTimeout(() => {
-        loadingTextElement.textContent = loadingMessages.slice(0, msgIndex + 1).join("\n");
-        msgIndex++;
-        progressMessages();
-      }, 300);
-    } else {
-      setTimeout(() => {
-        crtScreen.style.opacity = '0';
-        vignette.style.opacity = '0';
-        setTimeout(() => {
-          crtScreen.style.display = 'none';
-          vignette.style.display = 'none';
-          mainContent.style.display = 'block';
-          void mainContent.offsetWidth;
-          mainContent.style.opacity = '1';
-          mainContent.style.transform = 'translateY(0)';
-          topBar.style.opacity = '1';
-          topBar.style.pointerEvents = 'auto';
-          menuToggle.style.opacity = '1';
-
-          // 🎧 Toca a música após a animação do terminal
-          if (backgroundMusic.paused) {
-            backgroundMusic.play().catch(e => console.warn("Autoplay bloqueado", e));
+    const writeText = (text, speed = 100) => {
+      return new Promise((resolve) => {
+        let i = 0;
+        const interval = setInterval(() => {
+          titleElement.textContent = text.slice(0, i + 1);
+          i++;
+          if (i === text.length) {
+            clearInterval(interval);
+            resolve();
           }
+        }, speed);
+      });
+    };
 
-          atualizarBotaoVisitas();
-          animateTitleSequence();
-        }, 1000);
-      }, 1000);
+    const deleteText = (speed = 50) => {
+      return new Promise((resolve) => {
+        let text = titleElement.textContent;
+        let i = text.length;
+        const interval = setInterval(() => {
+          titleElement.textContent = text.slice(0, --i);
+          if (i <= 0) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, speed);
+      });
+    };
+
+    async function animateTitleSequence() {
+      titleElement.classList.add('typing-cursor');
+      await writeText("Spill blood in his name.");
+      await new Promise(r => setTimeout(r, 2000));
+      await deleteText();
+      await new Promise(r => setTimeout(r, 300));
+      await writeText("COUNTRY x 696");
+      titleElement.classList.remove('typing-cursor');
     }
-  }
 
-  function animateTitleSequence() {
-    const title = document.getElementById("animated-title");
-    const titleText = title.dataset.text;
-    let index = 0;
-    title.textContent = "";
-
-    function type() {
-      if (index < titleText.length) {
-        title.textContent += titleText.charAt(index);
-        index++;
-        setTimeout(type, 100);
-      }
-    }
-    type();
-  }
-
-  function atualizarBotaoVisitas() {
-    const btn = document.getElementById("visitas-btn");
-    if (btn) {
-      btn.textContent = "Visitas atualizadas";
-    }
-  }
-
-  enterButton.addEventListener("click", () => {
-    showLoadingMessages();
+    animateTitleSequence();
   });
-});
 </script>
 
 <style>
