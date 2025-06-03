@@ -818,7 +818,7 @@ padding: 60px 10px 80px 10px;
 </div>
 
 <div id="main-content">
-  <audio id="background-music" loop hidden>
+  <audio id="background-music" loop style="display: none;">
     <source src="musica/musica.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
@@ -1066,21 +1066,32 @@ padding: 60px 10px 80px 10px;
   }
 
   enterButton.addEventListener("click", function () {
-    enterButton.style.transition = 'opacity 0.6s ease';
-    dialogueText.style.transition = 'opacity 0.6s ease';
-    enterButton.style.opacity = '0';
-    dialogueText.style.opacity = '0';
-    introOverlay.style.opacity = '0';
-    vignette.style.opacity = '0';
+  enterButton.style.transition = 'opacity 0.6s ease';
+  dialogueText.style.transition = 'opacity 0.6s ease';
+  enterButton.style.opacity = '0';
+  dialogueText.style.opacity = '0';
+  introOverlay.style.opacity = '0';
+  vignette.style.opacity = '0';
 
-    typingAudio.currentTime = 0;
-    typingAudio.play().catch(() => {});
+  // toca som de digitação
+  typingAudio.currentTime = 0;
+  typingAudio.play().catch(() => {});
 
-    setTimeout(() => {
-      introOverlay.style.display = 'none';
-      showLoadingMessages();
-    }, 1000);
+  // desbloqueia o áudio no clique do usuário
+  backgroundMusic.load();
+  backgroundMusic.muted = true;
+  backgroundMusic.play().then(() => {
+    backgroundMusic.pause();
+    backgroundMusic.muted = false;
+  }).catch((err) => {
+    console.warn("Autoplay não permitido ainda:", err);
   });
+
+  setTimeout(() => {
+    introOverlay.style.display = 'none';
+    showLoadingMessages();
+  }, 1000);
+});
 
   document.addEventListener("DOMContentLoaded", () => {
   // detectar WebView
