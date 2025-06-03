@@ -1097,24 +1097,19 @@ padding: 60px 10px 80px 10px;
   // detectar WebView
   const isWebView = /Telegram|Instagram|FBAN|FBAV|Line/.test(navigator.userAgent);
 
-  if (isWebView) {
-    // Desativa animações automáticas em WebView
-    console.warn("WebView detectado: bloqueando autoplay");
-  } else {
-    // Comportamento normal
-    introOverlay.style.display = 'flex';
-    vignette.style.display = 'block';
-    void introOverlay.offsetWidth;
-    introOverlay.style.opacity = '1';
-    vignette.style.opacity = '1';
-    dialogueText.textContent = "Are you ready?";
-    dialogueText.style.display = 'block';
-    enterButton.style.display = "inline-block";
-    void dialogueText.offsetWidth;
-    void enterButton.offsetWidth;
-    dialogueText.style.opacity = '1';
-    enterButton.style.opacity = "1";
-  }
+  iintroOverlay.style.display = 'flex';
+vignette.style.display = 'block';
+void introOverlay.offsetWidth;
+void vignette.offsetWidth;
+introOverlay.style.opacity = '1';
+vignette.style.opacity = '1';
+dialogueText.textContent = "Are you ready?";
+dialogueText.style.display = 'block';
+enterButton.style.display = "inline-block";
+void dialogueText.offsetWidth;
+void enterButton.offsetWidth;
+dialogueText.style.opacity = '1';
+enterButton.style.opacity = "1";
 
   carregarImagens();
   navGallery.addEventListener('click', showGallery);
