@@ -890,6 +890,7 @@ padding: 60px 10px 80px 10px;
       <li>Salvação</li>
       <li>Carter</li>
       <li>Saquiel</li>
+      <li>Rick</li>
     </ul>
   </div>
   
@@ -1004,35 +1005,42 @@ padding: 60px 10px 80px 10px;
     "[0.01s] initializing system...",
     "[0.02s] connecting as 'country_boy'...",
     "[0.05s] starting authentication...",
+    "[0.30s] activating security...",
     "[0.45s] enabling IP spoof...",
     "[0.75s] finalizing initialization...",
-    "[0.90s] System online. welcome!"
+    "[0.90s] System online. welcome! :)"
   ];
   let msgIndex = 0;
 
-  function showLoadingMessages() {
+function showLoadingMessages() {
+    msgIndex = 0;
+    loadingTextElement.textContent = '';
+    loadingTextElement.style.display = 'none';
+    loadingTextElement.style.opacity = '0';
+
     vignette.style.opacity = '1';
     vignette.style.display = 'block';
     crtScreen.style.display = 'flex';
     crtScreen.style.opacity = '1';
+
     systemTitle.style.display = 'block';
     systemSubtitle.style.display = 'block';
     systemTitle.style.opacity = '1';
     systemSubtitle.style.opacity = '1';
 
     setTimeout(() => {
-      systemTitle.style.opacity = '0';
-      systemSubtitle.style.opacity = '0';
-      setTimeout(() => {
-        systemTitle.style.display = 'none';
-        systemSubtitle.style.display = 'none';
-        loadingTextElement.style.display = 'block';
-        void loadingTextElement.offsetWidth;
-        loadingTextElement.style.opacity = '1';
-        progressMessages();
-      }, 1000);
+        systemTitle.style.opacity = '0';
+        systemSubtitle.style.opacity = '0';
+        setTimeout(() => {
+            systemTitle.style.display = 'none';
+            systemSubtitle.style.display = 'none';
+            loadingTextElement.style.display = 'block';
+            void loadingTextElement.offsetWidth;
+            loadingTextElement.style.opacity = '1';
+            progressMessages();
+        }, 1000);
     }, 1000);
-  }
+}
 
   function progressMessages() {
     if (msgIndex < loadingMessages.length) {
@@ -1065,51 +1073,53 @@ padding: 60px 10px 80px 10px;
     }
   }
 
-  enterButton.addEventListener("click", function () {
-  enterButton.style.transition = 'opacity 0.6s ease';
-  dialogueText.style.transition = 'opacity 0.6s ease';
-  enterButton.style.opacity = '0';
-  dialogueText.style.opacity = '0';
-  introOverlay.style.opacity = '0';
-  vignette.style.opacity = '0';
+enterButton.addEventListener("click", function () {
+    enterButton.style.transition = 'opacity 0.6s ease';
+    dialogueText.style.transition = 'opacity 0.6s ease';
+    enterButton.style.opacity = '0';
+    dialogueText.style.opacity = '0';
+    introOverlay.style.opacity = '0';
+    vignette.style.opacity = '0';
 
-  // toca som de digitação
-  typingAudio.currentTime = 0;
-  typingAudio.play().catch(() => {});
+    typingAudio.currentTime = 0;
+    typingAudio.play().catch(() => {});
 
-  // desbloqueia o áudio no clique do usuário
-  backgroundMusic.load();
-  backgroundMusic.muted = true;
-  backgroundMusic.play().then(() => {
-    backgroundMusic.pause();
-    backgroundMusic.muted = false;
-  }).catch((err) => {
-    console.warn("Autoplay não permitido ainda:", err);
-  });
+    backgroundMusic.load();
+    backgroundMusic.muted = true;
+    backgroundMusic.play().then(() => {
+        backgroundMusic.pause();
+        backgroundMusic.muted = false;
+    }).catch((err) => {
+        console.warn("Autoplay não permitido ainda:", err);
+    });
 
-  setTimeout(() => {
-    introOverlay.style.display = 'none';
-    showLoadingMessages();
-  }, 1000);
+    setTimeout(() => {
+        introOverlay.style.display = 'none';
+        vignette.style.display = 'none';
+        resetTerminal();
+        showLoadingMessages();
+    }, 1000);
 });
-
   document.addEventListener("DOMContentLoaded", () => {
-  // detectar WebView
   const isWebView = /Telegram|Instagram|FBAN|FBAV|Line/.test(navigator.userAgent);
 
-introOverlay.style.display = 'flex';
-vignette.style.display = 'block';
-void introOverlay.offsetWidth;
-void vignette.offsetWidth;
-introOverlay.style.opacity = '1';
-vignette.style.opacity = '1';
-dialogueText.textContent = "Are you ready?";
-dialogueText.style.display = 'block';
-enterButton.style.display = "inline-block";
-void dialogueText.offsetWidth;
-void enterButton.offsetWidth;
-dialogueText.style.opacity = '1';
-enterButton.style.opacity = "1";
+  if (isWebView) {
+    console.warn("WebView detectado: bloqueando autoplay");
+  } else {
+    introOverlay.style.display = 'flex';
+    vignette.style.display = 'block';
+    void introOverlay.offsetWidth;
+    introOverlay.style.opacity = '1';
+    vignette.style.opacity = '1';
+    dialogueText.textContent = "Are you ready?";
+    dialogueText.style.display = 'block';
+    enterButton.style.display = "inline-block";
+    void dialogueText.offsetWidth;
+    void enterButton.offsetWidth;
+    dialogueText.style.opacity = '1';
+    enterButton.style.opacity = "1";
+  }
+
   carregarImagens();
   navGallery.addEventListener('click', showGallery);
   navAdmins.addEventListener('click', showAdmins);
@@ -1196,56 +1206,61 @@ enterButton.style.opacity = "1";
   });
 </script>
 <script>
-const titleElement = document.getElementById("animated-title");
-const typingSound = new Audio("audio/typing.mp3");
-typingSound.volume = 1.0;
-typingSound.playbackRate = 1.5;
+  let animationStarted = false;
 
-const playTypingSound = () => {
-  typingSound.pause();
-  typingSound.currentTime = 0;
-  typingSound.play().catch(() => {});
-};
+  const titleElement = document.getElementById("animated-title");
 
-const writeText = (text, speed = 100) => {
-  return new Promise((resolve) => {
-    let i = 0;
-    const interval = setInterval(() => {
-      titleElement.textContent = text.slice(0, i + 1);
-      playTypingSound();
-      i++;
-      if (i === text.length) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, speed);
-  });
-};
+  const typingAudio = new Audio("audio/typing.mp3");
+  typingAudio.volume = 1.0;
+  typingAudio.playbackRate = 1.5;
 
-const deleteText = (speed = 50) => {
-  return new Promise((resolve) => {
-    let text = titleElement.textContent;
-    let i = text.length;
-    const interval = setInterval(() => {
-      titleElement.textContent = text.slice(0, --i);
-      playTypingSound();
-      if (i <= 0) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, speed);
-  });
-};
+  const playTypingSound = () => {
+    typingAudio.pause(); 
+    typingAudio.currentTime = 0;
+    typingAudio.play().catch(() => {});
+  };
 
-async function animateTitleSequence() {
-  titleElement.classList.add('typing-cursor');
-  await writeText("Spill blood in his name.");
-  await new Promise(r => setTimeout(r, 2000));
-  await deleteText();
-  await new Promise(r => setTimeout(r, 300));
-  await writeText("COUNTRY x 696");
-  titleElement.classList.remove('typing-cursor');
-}
+  const writeText = (text, speed = 50) => {
+    return new Promise((resolve) => {
+      let i = 0;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, i + 1);
+        playTypingSound();
+        i++;
+        if (i === text.length) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  const deleteText = (speed = 200) => {
+    return new Promise((resolve) => {
+      let text = titleElement.textContent;
+      let i = text.length;
+      const interval = setInterval(() => {
+        titleElement.textContent = text.slice(0, --i);
+        if (i <= 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
+  };
+
+  async function animateTitleSequence() {
+    if (animationStarted) return;
+    animationStarted = true;
+
+    titleElement.classList.add('typing-cursor');
+    await writeText("Spill blood in his name.");
+    await new Promise(r => setTimeout(r, 1500));
+    await deleteText();
+    await new Promise(r => setTimeout(r, 300));
+    await writeText("COUNTRY x 696");
+    titleElement.classList.remove('typing-cursor');
+  }
 </script>
 
 <style>
@@ -1328,6 +1343,22 @@ async function animateTitleSequence() {
     50% { opacity: 0; }
   }
 </style>
+
+
+<script>
+function resetTerminal() {
+    msgIndex = 0;
+    crtScreen.style.display = 'none';
+    crtScreen.style.opacity = '0';
+    vignette.style.display = 'none';
+    vignette.style.opacity = '0';
+    systemTitle.style.display = 'none';
+    systemSubtitle.style.display = 'none';
+    loadingTextElement.style.display = 'none';
+    loadingTextElement.style.opacity = '0';
+    loadingTextElement.textContent = '';
+}
+</script>
 
 </body>
 </html>
