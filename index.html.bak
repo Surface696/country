@@ -1002,8 +1002,12 @@ padding: 60px 10px 80px 10px;
   });
 
   const loadingMessages = [
+    "[0.01s] initializing system...",
+    "[0.02s] connecting as 'country_boy'...",
+    "[0.05s] starting authentication...",
     "[0.30s] activating security...",
     "[0.45s] enabling IP spoof...",
+    "[0.75s] finalizing initialization...",
     "[0.90s] System online. welcome! :)"
   ];
   let msgIndex = 0;
